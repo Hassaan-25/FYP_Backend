@@ -9,6 +9,7 @@ const cloudinary = require("cloudinary");
 const cloudinaryStorage = require("multer-storage-cloudinary");
 const checkAuth = require("../middleware/check-auth");
 var jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 cloudinary.config({
   cloud_name: AppConfig.cloudinaryName,
@@ -22,6 +23,57 @@ const storage = cloudinaryStorage({
   allowedFormats: ["jpg", "png"],
 });
 const parser = multer({ storage: storage });
+
+router.post("/user/sendEmail", async (req, res) => {
+  const userEmail = req.body.recipientEmail;
+  const userName = req.body.recipientName;
+  const userLat = req.body.lat;
+  const userLng = req.body.lng;
+
+  // Create a transporter using your email configuration
+  const transporter = nodemailer.createTransport({
+    // service: "gmail",
+    host: "smtp-relay.sendinblue.com",
+    port: 587,
+    secure: false,
+    tls: {
+      rejectUnauthorized: false,
+    },
+    auth: {
+      user: "hassaanbinsajid008@gmail.com",
+      pass: "DU5j9vVBtFq6Nmwd",
+    },
+  });
+
+  // Prepare the email options
+  const mailOptions = {
+    from: "hemo.fypnust@gmail.com",
+    to: userEmail,
+    subject: "Urgent Email",
+    text: `Dear ${userName},
+  
+  I hope this email finds you well. I am reaching out to you on behalf of Hemo, an application dedicated to connecting blood donors with those in need. We have received a request for blood donation from a user who is urgently seeking assistance, and you have been recommended as a potential donor.
+  
+  Below, you will find the details of the individual who is in need of blood:
+  
+  Click on the link to access maps
+  [Google Maps Link](https://www.google.com/maps/dir/?api=1&destination=${userLat},${userLng})
+  
+  Please note that the information provided has been verified by our team, and the need for blood is genuine. Your willingness to donate could make a significant difference in saving a life.
+  `,
+  };
+
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending email:", error);
+      res.status(500).send("Error sending email");
+    } else {
+      console.log("Email sent:", info.response);
+      res.status(200).send("Email sent successfully");
+    }
+  });
+});
 
 // Saving User
 router.post(
@@ -246,27 +298,6 @@ router.get("/user/fetch", async (req, res) => {
     }
   }
 });
-
-////////////////////
-// router.get("/users/fetch/:city", async (req, res) => {
-//   try {
-//     const cityName = req.params.city;
-//     const users = await User.find({ cityName: cityName });
-//     res.json(users);
-//   } catch (error) {
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-
-// router.get("/users/fetch/?antigen", async (req, res) => {
-//   try {
-//     const antigen = req.params.antigen;
-//     const users = await User.find({ antigen: antigen });
-//     res.json(users);
-//   } catch (error) {
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
 
 // fetching User by ID
 router.get("/user/fetchById/:Id", async (req, res) => {
