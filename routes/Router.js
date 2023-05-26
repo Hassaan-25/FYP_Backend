@@ -19,26 +19,32 @@ const whitelist = [
   "http://localhost:8082",
   "http://localhost:8083",
   "https://dev.saaditrips.com",
+  "https://hemo-fyp.azurewebsites.net",
+  "https://putlb.localto.net",
 ];
+// const corsOptions = {
+//   origin(origin, callback) {
+//     console.log(
+//       "---------------------------------\n origin: ",
+//       origin,
+//       "\n---------------------------------"
+//     );
+//     if (
+//       whitelist.indexOf(origin) !== -1 ||
+//       !origin ||
+//       (app.get("env") === "development" &&
+//         (origin.indexOf("192.168") >= 0 || origin === "null")) ||
+//       origin === "null"
+//     ) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// };
 const corsOptions = {
-  origin(origin, callback) {
-    console.log(
-      "---------------------------------\n origin: ",
-      origin,
-      "\n---------------------------------"
-    );
-    if (
-      whitelist.indexOf(origin) !== -1 ||
-      !origin ||
-      (app.get("env") === "development" &&
-        (origin.indexOf("192.168") >= 0 || origin === "null")) ||
-      origin === "null"
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "*", // Allow requests from any origin
   credentials: true,
 };
 

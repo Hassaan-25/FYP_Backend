@@ -29,7 +29,8 @@ router.post("/user/sendEmail", async (req, res) => {
   const userName = req.body.recipientName;
   const userLat = req.body.lat;
   const userLng = req.body.lng;
-
+  const time = req.body.time;
+  const distance = req.body.distance;
   // Create a transporter using your email configuration
   const transporter = nodemailer.createTransport({
     // service: "gmail",
@@ -49,17 +50,21 @@ router.post("/user/sendEmail", async (req, res) => {
   const mailOptions = {
     from: "hemo.fypnust@gmail.com",
     to: userEmail,
-    subject: "Urgent Email",
+    subject: "URGENT! Blood Required",
     text: `Dear ${userName},
   
   I hope this email finds you well. I am reaching out to you on behalf of Hemo, an application dedicated to connecting blood donors with those in need. We have received a request for blood donation from a user who is urgently seeking assistance, and you have been recommended as a potential donor.
   
+
+  User who requested blood is ${distance} away and will take ${time} to reach him.
+
   Below, you will find the details of the individual who is in need of blood:
-  
   Click on the link to access maps
   [Google Maps Link](https://www.google.com/maps/dir/?api=1&destination=${userLat},${userLng})
   
   Please note that the information provided has been verified by our team, and the need for blood is genuine. Your willingness to donate could make a significant difference in saving a life.
+
+  HAPPY SAVING LIVES!!
   `,
   };
 
